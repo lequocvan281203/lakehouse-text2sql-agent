@@ -1,0 +1,18 @@
+# Data Processing & Storage
+pyspark>=3.5.0
+duckdb>=1.0.0
+pyarrow>=15.0.0
+minio>=7.2.0
+faker>=24.0.0
+
+# AI, Vector DB & Orchestration
+google-generativeai>=0.7.0
+langchain>=0.2.0
+langchain-google-genai>=1.0.0
+langgraph>=0.1.0
+chromadb>=0.5.0
+
+# UI & Utilities
+streamlit>=1.35.0
+plotly>=5.20.0
+python-dotenv>=1.0.0

@@ -1,0 +1,24 @@
+# Môi trường ảo Python
+venv/
+.venv/
+env/
+
+# Biến môi trường & API Keys (RẤT QUAN TRỌNG)
+.env
+*.env
+
+# Cache của Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Dữ liệu cục bộ & MinIO Volume
+minio_data/
+data/mock_bronze_tiki.json
+data/vector_db/
+
+# File tạm của hệ thống và IDE
+.vscode/
+.idea/
+.DS_Store
+*.tmp
