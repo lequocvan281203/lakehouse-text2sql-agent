@@ -3,7 +3,9 @@ import sys
 from dotenv import load_dotenv
 
 # Đảm bảo nhận diện được thư mục gốc của project
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+if ROOT_DIR not in sys.path:
+    sys.path.append(ROOT_DIR)
 
 # Đảm bảo in Unicode (emoji) không bị lỗi trên Windows Terminal
 if sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
@@ -45,7 +47,7 @@ class GeminiCustomEmbeddingFunction(EmbeddingFunction[Documents]):
 
 # 3. Khởi tạo Persistent Client lưu vector vào thư mục data/vector_db
 print("⏳ Khởi tạo ChromaDB client...")
-persist_dir = os.path.join("data", "vector_db")
+persist_dir = os.path.join(ROOT_DIR, "data", "vector_db")
 client = chromadb.PersistentClient(path=persist_dir)
 
 # 4. Tạo hoặc lấy Collection với Custom Embedding Function

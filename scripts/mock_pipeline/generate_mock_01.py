@@ -52,8 +52,10 @@ def generate_mock_data(num_products=40, num_days=7):
     return records
 
 if __name__ == "__main__":
+    import os
+    ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
     records = generate_mock_data()
-    output_path = "data/mock_bronze_tiki.json"
+    output_path = os.path.join(ROOT_DIR, "data", "mock_bronze_tiki.json")
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(records, f, ensure_ascii=False, indent=2)
     print(f"✅ Đã tạo thành công {len(records)} dòng dữ liệu vào {output_path}")

@@ -7,7 +7,7 @@ import plotly.express as px
 # Thêm thư mục gốc vào path để import agent
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
-from scripts.langgraph_agent_05 import agent_app, duckdb_con
+from scripts.mock_pipeline.langgraph_agent_05 import agent_app, duckdb_con
 
 # Cấu hình giao diện Streamlit
 st.set_page_config(

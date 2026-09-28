@@ -33,17 +33,21 @@ if minio_active:
 else:
     print("ℹ️ MinIO S3 chưa khởi chạy, hệ thống sẽ lưu và truy vấn Parquet trực tiếp tại data/silver.")
 
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+bronze_file = os.path.join(ROOT_DIR, "data", "mock_bronze_tiki.json").replace("\\", "/")
+
 # 1. Đọc dữ liệu Bronze JSON vào view tạm
-print("⏳ Đang đọc dữ liệu Bronze từ data/mock_bronze_tiki.json...")
-con.execute("""
+print(f"⏳ Đang đọc dữ liệu Bronze từ {bronze_file}...")
+con.execute(f"""
     CREATE OR REPLACE VIEW raw_bronze AS 
-    SELECT * FROM read_json_auto('data/mock_bronze_tiki.json');
+    SELECT * FROM read_json_auto('{bronze_file}');
 """)
 
 # 2. Xuất dữ liệu Silver (dim_product, dim_date, fact_daily_prices)
 print("⏳ Đang xuất dữ liệu Silver...")
 
-def export_parquet(query, s3_path, local_path, is_partitioned=False):
+def export_parquet(query, s3_path, local_rel_path, is_partitioned=False):
+    local_path = os.path.join(ROOT_DIR, local_rel_path)
     os.makedirs(os.path.dirname(local_path), exist_ok=True)
     if is_partitioned:
         con.execute(f"COPY ({query}) TO '{local_path}' (FORMAT PARQUET, COMPRESSION SNAPPY, PARTITION_BY (year, month), OVERWRITE_OR_IGNORE 1);")

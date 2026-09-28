@@ -24,7 +24,8 @@ else:
     print(f"ℹ️ Bucket '{BUCKET_NAME}' đã sẵn sàng.")
 
 # 2. Quét tất cả file CSV trong thư mục data/raw_kaggle/
-local_dir = os.path.join("data", "raw_kaggle")
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+local_dir = os.path.join(ROOT_DIR, "data", "raw_kaggle")
 csv_files = glob.glob(os.path.join(local_dir, "*.csv"))
 
 if not csv_files:

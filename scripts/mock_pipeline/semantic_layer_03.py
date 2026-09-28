@@ -46,7 +46,7 @@ def get_duckdb_lakehouse():
             minio_online = False
 
     if not minio_online:
-        base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "silver"))
+        base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data", "silver"))
         product_path = os.path.join(base_path, "dim_product", "*.parquet").replace("\\", "/")
         date_path = os.path.join(base_path, "dim_date", "*.parquet").replace("\\", "/")
         prices_path = os.path.join(base_path, "fact_daily_prices", "*", "*", "*.parquet").replace("\\", "/")

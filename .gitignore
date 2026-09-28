@@ -16,9 +16,13 @@ __pycache__/
 minio_data/
 data/mock_bronze_tiki.json
 data/vector_db/
+data/raw_kaggle/
+data/vector_db_tiki/
 
 # File tạm của hệ thống và IDE
 .vscode/
 .idea/
 .DS_Store
 *.tmp
+# Added by code-review-graph
+.code-review-graph/

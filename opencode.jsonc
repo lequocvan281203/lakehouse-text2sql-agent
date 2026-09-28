@@ -1,0 +1,15 @@
+{
+  "mcp": {
+    "code-review-graph": {
+      "type": "local",
+      "command": [
+        "C:\\Users\\MSI\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+        "-m",
+        "code_review_graph",
+        "serve",
+        "--repo",
+        "D:\\DataLakeHouse\\lakehouse-ai-agent"
+      ]
+    }
+  }
+}

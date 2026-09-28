@@ -12,7 +12,9 @@ if sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
         pass
 
 # Đảm bảo import được các module từ thư mục gốc
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+if ROOT_DIR not in sys.path:
+    sys.path.append(ROOT_DIR)
 
 import chromadb
 from chromadb.api.types import Documents, EmbeddingFunction, Embeddings
@@ -20,7 +22,7 @@ import google.generativeai as genai
 from langgraph.graph import StateGraph, END
 
 # Import trực tiếp hàm get_duckdb_lakehouse từ semantic_layer_03
-from scripts.semantic_layer_03 import get_duckdb_lakehouse
+from scripts.mock_pipeline.semantic_layer_03 import get_duckdb_lakehouse
 
 # --- CẤU HÌNH HỆ THỐNG ---
 load_dotenv()
@@ -48,7 +50,7 @@ class GeminiCustomEmbeddingFunction(EmbeddingFunction[Documents]):
         return embeddings
 
 # Kết nối ChromaDB
-persist_dir = os.path.join("data", "vector_db")
+persist_dir = os.path.join(ROOT_DIR, "data", "vector_db")
 client = chromadb.PersistentClient(path=persist_dir)
 collection = client.get_collection(
     name="lakehouse_metadata",
