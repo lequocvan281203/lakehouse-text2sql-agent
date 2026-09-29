@@ -1,5 +1,13 @@
 import os
+import sys
 import duckdb
+
+if sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+
 
 # 1. Khởi tạo kết nối DuckDB và cấu hình S3 MinIO
 con = duckdb.connect()
@@ -87,7 +95,7 @@ con.execute("""
         CAST(comment_id AS BIGINT) AS comment_id,
         CAST(product_id AS BIGINT) AS book_id,
         CAST(customer_id AS BIGINT) AS customer_id,
-        CAST(customer_rating AS DOUBLE) AS rating,
+        TRY_CAST(rating AS DOUBLE) AS rating,
         CAST(COALESCE(thank_count, 0) AS BIGINT) AS thank_count,
         TRIM(COALESCE(title, '')) AS review_title,
         TRIM(COALESCE(content, '')) AS review_content
@@ -99,7 +107,7 @@ con.execute("""
         ignore_errors=True
     )
     WHERE comment_id IS NOT NULL AND product_id IS NOT NULL
-    QUALIFY ROW_NUMBER() OVER (PARTITION BY comment_id ORDER BY customer_rating DESC) = 1;
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY comment_id ORDER BY TRY_CAST(rating AS DOUBLE) DESC) = 1;
 """)
 
 review_count = con.execute("SELECT count(*) FROM fact_book_reviews").fetchone()[0]
@@ -115,12 +123,12 @@ con.execute("""
 """)
 print("  -> Ghi thành công: dim_book.parquet")
 
-# Xuất fact_book_performance có Partition theo category
+# Xuất fact_book_performance
 con.execute("""
-    COPY fact_book_performance TO 's3://lakehouse-warehouse/silver/tiki_books/fact_book_performance/' 
-    (FORMAT PARQUET, COMPRESSION SNAPPY, PARTITION_BY (category));
+    COPY fact_book_performance TO 's3://lakehouse-warehouse/silver/tiki_books/fact_book_performance/fact_book_performance.parquet' 
+    (FORMAT PARQUET, COMPRESSION SNAPPY);
 """)
-print("  -> Ghi thành công: fact_book_performance (Partitioned theo category)")
+print("  -> Ghi thành công: fact_book_performance.parquet")
 
 # Xuất fact_book_reviews
 con.execute("""

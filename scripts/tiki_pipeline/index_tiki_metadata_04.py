@@ -5,6 +5,12 @@ from dotenv import load_dotenv
 # Thêm thư mục gốc vào path để import config
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
+if sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+
 import chromadb
 from chromadb.api.types import Documents, EmbeddingFunction, Embeddings
 import google.generativeai as genai
@@ -18,9 +24,9 @@ if not api_key:
 
 genai.configure(api_key=api_key)
 
-# 2. Embedding Function dùng Gemini text-embedding-004
+# 2. Embedding Function dùng Gemini gemini-embedding-001
 class GeminiCustomEmbeddingFunction(EmbeddingFunction[Documents]):
-    def __init__(self, model_name: str = "models/text-embedding-004"):
+    def __init__(self, model_name: str = "models/gemini-embedding-001"):
         self.model_name = model_name
 
     def __call__(self, input: Documents) -> Embeddings:

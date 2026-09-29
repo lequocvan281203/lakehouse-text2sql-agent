@@ -1,6 +1,14 @@
 import os
+import sys
 import glob
 from minio import Minio
+
+if sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+
 
 # 1. Cấu hình kết nối MinIO
 MINIO_ENDPOINT = "localhost:9000"

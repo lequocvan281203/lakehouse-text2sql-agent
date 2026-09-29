@@ -2,6 +2,12 @@ import os
 import sys
 import duckdb
 
+if sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+
 def get_duckdb_tiki_lakehouse():
     """Khởi tạo kết nối DuckDB kết nối trực tiếp đến MinIO Silver Layer của Tiki Books."""
     con = duckdb.connect()
@@ -37,7 +43,7 @@ def get_duckdb_tiki_lakehouse():
             f.avg_rating,
             f.review_count
         FROM read_parquet('s3://lakehouse-warehouse/silver/tiki_books/dim_book/dim_book.parquet') b
-        JOIN read_parquet('s3://lakehouse-warehouse/silver/tiki_books/fact_book_performance/*/*.parquet') f
+        JOIN read_parquet('s3://lakehouse-warehouse/silver/tiki_books/fact_book_performance/*.parquet') f
             ON b.book_id = f.book_id;
     """)
     return con
