@@ -31,7 +31,7 @@ if not api_key:
     raise ValueError("❌ Không tìm thấy GEMINI_API_KEY trong file .env!")
 
 genai.configure(api_key=api_key)
-llm = genai.GenerativeModel("models/gemini-3.6-flash")
+llm = genai.GenerativeModel("models/gemini-flash-lite-latest")
 
 # Custom Embedding Function khớp với vector DB đã index ở Pha 3
 class GeminiCustomEmbeddingFunction(EmbeddingFunction[Documents]):
@@ -73,21 +73,27 @@ class AgentState(TypedDict):
 import time
 from google.api_core.exceptions import ResourceExhausted
 
-def generate_content_with_retry(llm, prompt, max_retries=10):
+MOCK_CANDIDATE_MODELS = [
+    "models/gemini-flash-lite-latest",
+    "models/gemini-3.5-flash-lite",
+    "models/gemini-3.1-flash-lite",
+    "models/gemini-3.7-flash",
+]
+
+def generate_content_with_retry(llm, prompt, max_retries=3):
     for attempt in range(max_retries):
-        try:
-            return llm.generate_content(prompt)
-        except ResourceExhausted as e:
-            if attempt == max_retries - 1:
-                raise e
-            wait_time = 60
-            print(f"⚠️ Chạm giới hạn Gemini API (Rate Limit 429). Tự động chờ {wait_time}s để reset quota...", flush=True)
-            time.sleep(wait_time)
-        except Exception as e:
-            if attempt == max_retries - 1:
-                raise e
-            print(f"⚠️ Lỗi tạm thời khi gọi Gemini API ({e}). Thử lại sau 5s...", flush=True)
-            time.sleep(5)
+        for model_name in MOCK_CANDIDATE_MODELS:
+            try:
+                model = genai.GenerativeModel(model_name)
+                return model.generate_content(prompt)
+            except ResourceExhausted:
+                continue
+            except Exception:
+                continue
+        wait_time = 20
+        print(f"⚠️ Chạm giới hạn Gemini API. Chờ {wait_time}s thử lại...", flush=True)
+        time.sleep(wait_time)
+    raise RuntimeError("❌ Không thể gọi Gemini API sau khi thử tất cả mô hình dự phòng.")
 
 # --- NODE 1: RETRIEVE METADATA CONTEXT ---
 def retrieve_context_node(state: AgentState) -> dict:
